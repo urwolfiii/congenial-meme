@@ -93,13 +93,6 @@ init_db()
 def index():
     return send_file('static/index.html')
 
-@app.route('/css/style.css')
-def serve_css():
-    return send_file('static/css/style.css')
-
-@app.route('/js/script.js')
-def serve_js():
-    return send_file('static/js/script.js')
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -234,6 +227,12 @@ def get_user_info(username):
             'donated': user['donated']
         }
     })
+@app.route('/css/style.css')
+def serve_css():
+    return send_file('static/style.css')
+@app.route('/js/script.js')
+def serve_js():
+    return send_file('static/js/script.js')
 
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
