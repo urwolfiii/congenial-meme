@@ -1,1 +1,11 @@
-{}
+{
+    "Mauro22": {
+        "password": "920018569c97fe0828c0a7124f234fa20ded674c29428aa707163fbe40af50cf",
+        "balance": 9999989400.0,
+        "spins": 17,
+        "wins": 0,
+        "losses": 17,
+        "donated": 1160.0,
+        "created_at": 1743443639.5324023
+    }
+}

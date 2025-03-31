@@ -24,19 +24,33 @@ SYMBOLS = {
 
 # Initialize users database if it doesn't exist
 def init_db():
-    if not os.path.exists('users.json'):
-        with open('users.json', 'w') as f:
-            json.dump({}, f)
+    try:
+        if not os.path.exists('users.json'):
+            with open('users.json', 'w') as f:
+                json.dump({}, f)
+    except Exception as e:
+        print(f"Error initializing database: {e}")
+        # Create an empty dict if file cannot be created
+        return {}
 
 # Helper function to get all users
 def get_users():
-    with open('users.json', 'r') as f:
-        return json.load(f)
+    try:
+        with open('users.json', 'r') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Return empty dict if file doesn't exist or is invalid
+        return {}
 
 # Helper function to save users
 def save_users(users):
-    with open('users.json', 'w') as f:
-        json.dump(users, f, indent=4)
+    try:
+        with open('users.json', 'w') as f:
+            json.dump(users, f, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving users: {e}")
+        return False
 
 # Helper function to get a user
 def get_user(username):
@@ -62,8 +76,7 @@ def create_user(username, password):
         'created_at': time.time()
     }
     
-    save_users(users)
-    return True
+    return save_users(users)
 
 # Helper function to update user balance
 def update_balance(username, amount):
@@ -72,8 +85,7 @@ def update_balance(username, amount):
         return False
     
     users[username]['balance'] += amount
-    save_users(users)
-    return True
+    return save_users(users)
 
 # Helper function to spin the slot
 def spin_slot():
@@ -92,7 +104,6 @@ init_db()
 @app.route('/')
 def index():
     return send_file('static/index.html')
-
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -227,9 +238,11 @@ def get_user_info(username):
             'donated': user['donated']
         }
     })
+
 @app.route('/css/style.css')
 def serve_css():
     return send_file('static/style.css')
+
 @app.route('/js/script.js')
 def serve_js():
     return send_file('static/js/script.js')
