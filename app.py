@@ -93,9 +93,13 @@ init_db()
 def index():
     return send_file('static/index.html')
 
-@app.route('/static/<path:path>')
-def serve_static(path):
-    return send_file(f'static/{path}')
+@app.route('/css/style.css')
+def serve_css():
+    return send_file('static/css/style.css')
+
+@app.route('/js/script.js')
+def serve_js():
+    return send_file('static/js/script.js')
 
 @app.route('/api/register', methods=['POST'])
 def register():
