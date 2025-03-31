@@ -172,44 +172,57 @@ def play_spin():
     # Spin the slot
     result = spin_slot()
     
-    # Check if win (all symbols are the same)
-    is_win = result[0] == result[1] == result[2]
+    # Determine the type of win, if any.
+    triple_win = result[0] == result[1] == result[2]
+    double_win = (
+        (result[0] == result[1] and result[0] != result[2]) or
+        (result[1] == result[2] and result[1] != result[0])
+    )
     
-    # Update user stats
     users = get_users()
     users[username]['spins'] += 1
-    
-    if is_win:
-        # Calculate winnings
+
+    if triple_win:
+        # Full win: all symbols are the same
         multiplier = SYMBOLS[result[0]]
         winnings = bet_amount * multiplier
-        
+        win_message = f"Triple win! You won {winnings:.2f} with a multiplier of {multiplier}."
+        users[username]['wins'] += 1
+    elif double_win:
+        # Double win: exactly two adjacent symbols match
+        # Determine which adjacent match occurred.
+        if result[0] == result[1]:
+            symbol = result[0]
+        else:
+            symbol = result[1]
+        multiplier = SYMBOLS[symbol] / 2  # Half the multiplier
+        winnings = bet_amount * multiplier
+        win_message = f"Double win! You won {winnings:.2f} with half multiplier ({multiplier})."
+        users[username]['wins'] += 1
+    else:
+        winnings = 0
+
+    if winnings > 0:
         # 50% of winnings go to charity if win
         charity_donation = winnings * 0.5
         player_winnings = winnings - charity_donation
-        
         users[username]['balance'] += player_winnings
-        users[username]['wins'] += 1
         users[username]['donated'] += charity_donation
-        
-        message = f"You won {winnings:.2f}! {charity_donation:.2f} donated to charity."
+        message = f"{win_message} {charity_donation:.2f} donated to charity."
     else:
         # 10% of bet goes to charity if lose
         charity_donation = bet_amount * 0.1
-        loss_amount = bet_amount
-        
-        users[username]['balance'] -= loss_amount
+        users[username]['balance'] -= bet_amount
         users[username]['losses'] += 1
         users[username]['donated'] += charity_donation
-        
-        message = f"You lost {loss_amount:.2f}. {charity_donation:.2f} donated to charity."
+        message = f"You lost {bet_amount:.2f}. {charity_donation:.2f} donated to charity."
     
     save_users(users)
     
     return jsonify({
         'success': True,
         'result': result,
-        'is_win': is_win,
+        'is_win': winnings > 0,
         'message': message,
         'user': {
             'username': username,

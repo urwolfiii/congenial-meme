@@ -1,11 +1,11 @@
 {
-    "Mauro22": {
-        "password": "920018569c97fe0828c0a7124f234fa20ded674c29428aa707163fbe40af50cf",
-        "balance": 9999989400.0,
-        "spins": 17,
+    "user_hxqzlg": {
+        "password": "f28f1951cbbc6a8ea5cedcb4a94112037bcf87bf4070ba6d2cd88f0fed12040f",
+        "balance": 1000,
+        "spins": 0,
         "wins": 0,
-        "losses": 17,
-        "donated": 1160.0,
-        "created_at": 1743443639.5324023
+        "losses": 0,
+        "donated": 0,
+        "created_at": 1743445742.8724468
     }
 }
