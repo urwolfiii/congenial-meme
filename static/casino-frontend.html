@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charity Casino - Slot Machine</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Charity Casino</h1>
+        <p class="tagline">Play and give back - 10% of losses and 50% of winnings go to charity</p>
+        
+        <div id="login-section" class="section">
+            <h2>Login or Register</h2>
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password">
+            </div>
+            <div class="button-group">
+                <button id="login-btn" class="btn primary">Login</button>
+                <button id="register-btn" class="btn secondary">Register</button>
+            </div>
+        </div>
+        
+        <div id="game-section" class="section hidden">
+            <div class="user-info">
+                <h2>Welcome, <span id="user-name"></span>!</h2>
+                <p>Balance: $<span id="user-balance">0.00</span></p>
+                <p>Total Donated: $<span id="user-donated">0.00</span></p>
+            </div>
+            
+            <div class="slot-machine">
+                <div class="slot-display">
+                    <div class="slot" id="slot-1">?</div>
+                    <div class="slot" id="slot-2">?</div>
+                    <div class="slot" id="slot-3">?</div>
+                </div>
+                
+                <div class="message" id="result-message">Place your bet and spin!</div>
+                
+                <div class="controls">
+                    <div class="form-group">
+                        <label for="bet-amount">Bet Amount:</label>
+                        <input type="number" id="bet-amount" min="1" max="100" value="10">
+                    </div>
+                    <button id="spin-btn" class="btn primary">Spin!</button>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <h3>Your Stats</h3>
+                <p>Spins: <span id="stats-spins">0</span></p>
+                <p>Wins: <span id="stats-wins">0</span></p>
+                <p>Losses: <span id="stats-losses">0</span></p>
+            </div>
+            
+            <div class="payouts">
+                <h3>Symbol Payouts</h3>
+                <div class="payout-grid">
+                    <div class="payout-item">
+                        <span class="symbol">🍒</span>
+                        <span class="multiplier">x0.5</span>
+                    </div>
+                    <div class="payout-item">
+                        <span class="symbol">🍋</span>
+                        <span class="multiplier">x0.8</span>
+                    </div>
+                    <div class="payout-item">
+                        <span class="symbol">🍊</span>
+                        <span class="multiplier">x1</span>
+                    </div>
+                    <div class="payout-item">
+                        <span class="symbol">🍇</span>
+                        <span class="multiplier">x1.5</span>
+                    </div>
+                    <div class="payout-item">
+                        <span class="symbol">🔔</span>
+                        <span class="multiplier">x2</span>
+                    </div>
+                    <div class="payout-item">
+                        <span class="symbol">💎</span>
+                        <span class="multiplier">x5</span>
+                    </div>
+                    <div class="payout-item">
+                        <span class="symbol">7️⃣</span>
+                        <span class="multiplier">x10</span>
+                    </div>
+                    <div class="payout-item">
+                        <span class="symbol">⭐</span>
+                        <span class="multiplier">x20</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="logout-btn" class="btn secondary">Logout</button>
+        </div>
+        
+        <div id="leaderboard-section" class="section">
+            <h3>Top Players</h3>
+            <div class="leaderboard" id="leaderboard-list">
+                <div class="leaderboard-loading">Loading...</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Charity Casino - Making gambling a force for good</p>
+            <p>Note: This is a demo casino. No real money is involved.</p>
+        </footer>
+    </div>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>

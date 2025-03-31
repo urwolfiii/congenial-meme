@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Slotautomat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: gold;
+            margin-bottom: 10px;
+        }
+        
+        .account-section {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .balance {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        
+        .slot-machine {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .reels {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .reel {
+            height: 240px;
+            border: 2px solid gold;
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #000;
+        }
+        
+        .symbols {
+            height: 300%;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .symbol {
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            text-align: center;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #388e3c;
+        }
+        
+        button:disabled {
+            background-color: #616161;
+            cursor: not-allowed;
+        }
+        
+        .bet-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        #bet-amount {
+            width: 80px;
+            padding: 8px;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 5px;
+            border: 2px solid #4caf50;
+            background-color: #121212;
+            color: white;
+        }
+        
+        .result {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            min-height: 30px;
+        }
+        
+        .win {
+            color: gold;
+            animation: winAnimation 1s infinite;
+        }
+        
+        @keyframes winAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .statistics {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .statistics h2 {
+            color: gold;
+            margin-bottom: 10px;
+        }
+        
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .stat-item {
+            background-color: #2a2a2a;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .login-section {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .login-section input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #4caf50;
+            background-color: #121212;
+            color: white;
+        }
+        
+        .payline {
+            display: block;
+            height: 2px;
+            background-color: red;
+            position: absolute;
+            top: 33%;
+            width: 100%;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .payline.active {
+            opacity: 1;
+        }
+        
+        .payline:nth-child(2) {
+            top: 50%;
+            background-color: yellow;
+        }
+        
+        .payline:nth-child(3) {
+            top: 67%;
+            background-color: blue;
+        }
+        
+        .paylines-container {
+            position: relative;
+            height: 240px;
+        }
+        
+        .highlight {
+            box-shadow: 0 0 10px 5px gold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Casino Slotautomat</h1>
+            <p>5 Walzen · 3 Reihen · Viel Glück!</p>
+        </header>
+        
+        <div id="login-container">
+            <div class="login-section">
+                <h2>Willkommen zum Slotautomat Demo</h2>
+                <p>Erstelle einen Account um mit 100€ Demoguthaben zu starten</p>
+                <input type="text" id="username" placeholder="Benutzername">
+                <input type="password" id="password" placeholder="Passwort">
+                <button id="login-btn">Einloggen / Registrieren</button>
+            </div>
+        </div>
+        
+        <div id="game-container" style="display: none;">
+            <div class="account-section">
+                <div>
+                    <p>Hallo, <span id="user-name">Spieler</span>!</p>
+                    <p class="balance">Guthaben: <span id="balance">100.00</span> €</p>
+                </div>
+                <button id="logout-btn">Ausloggen</button>
+            </div>
+            
+            <div class="slot-machine">
+                <div class="paylines-container">
+                    <div class="reels">
+                        <div class="reel" id="reel1">
+                            <div class="symbols">
+                                <!-- Symbols will be generated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="reel" id="reel2">
+                            <div class="symbols">
+                                <!-- Symbols will be generated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="reel" id="reel3">
+                            <div class="symbols">
+                                <!-- Symbols will be generated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="reel" id="reel4">
+                            <div class="symbols">
+                                <!-- Symbols will be generated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="reel" id="reel5">
+                            <div class="symbols">
+                                <!-- Symbols will be generated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payline"></div>
+                    <div class="payline"></div>
+                    <div class="payline"></div>
+                </div>
+                
+                <div class="bet-controls">
+                    <button id="decrease-bet">-</button>
+                    <input type="number" id="bet-amount" value="1.00" min="0.50" max="100" step="0.50">
+                    <button id="increase-bet">+</button>
+                </div>
+                
+                <div class="controls">
+                    <button id="spin-btn">Drehen</button>
+                    <button id="auto-spin-btn">Auto-Drehen</button>
+                </div>
+                
+                <div class="result" id="result-message"></div>
+            </div>
+            
+            <div class="statistics">
+                <h2>Spielstatistiken</h2>
+                <div class="statistics-grid">
+                    <div class="stat-item">
+                        <p>Gespielte Runden: <span id="total-spins">0</span></p>
+                    </div>
+                    <div class="stat-item">
+                        <p>Gewonnene Runden: <span id="winning-spins">0</span></p>
+                    </div>
+                    <div class="stat-item">
+                        <p>Höchster Gewinn: <span id="highest-win">0.00</span> €</p>
+                    </div>
+                    <div class="stat-item">
+                        <p>Gesamteinsatz: <span id="total-bet">0.00</span> €</p>
+                    </div>
+                    <div class="stat-item">
+                        <p>Gesamtgewinn: <span id="total-win">0.00</span> €</p>
+                    </div>
+                    <div class="stat-item">
+                        <p>Casino-Spende: <span id="casino-donation">0.00</span> €</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Konstanten für den Spielmechanismus
+        const SYMBOLS = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣', '⭐'];
+        const SYMBOL_VALUES = {
+            '🍒': 0.5,  // Niedrigster Wert
+            '🍋': 0.8,
+            '🍊': 1,
+            '🍇': 1.5,
+            '🔔': 2,
+            '💎': 5,
+            '7️⃣': 10,
+            '⭐': 20    // Höchster Wert
+        };
+        
+        // Gewinnlinien (3 horizontale Linien)
+        const PAYLINES = [
+            // Top row
+            [[0,0], [1,0], [2,0], [3,0], [4,0]],
+            // Middle row
+            [[0,1], [1,1], [2,1], [3,1], [4,1]],
+            // Bottom row
+            [[0,2], [1,2], [2,2], [3,2], [4,2]]
+        ];
+        
+        // Spiel-Parameter
+        const REEL_COUNT = 5;
+        const ROW_COUNT = 3;
+        const HOUSE_EDGE = 0.25; // 25% Margin für das Haus
+        const CASINO_PERCENTAGE = 0.10; // 10% der Gewinne gehen ans Casino
+        const PLAYER_TAX = 0.50; // 50% des Spieler-Gewinns wird abgezogen
+        
+        // Spiel-Status
+        let isSpinning = false;
+        let autoSpinActive = false;
+        let currentSymbols = Array(REEL_COUNT).fill().map(() => Array(ROW_COUNT).fill(''));
+        
+        // Spieler-Statistiken
+        let stats = {
+            totalSpins: 0,
+            winningSpins: 0,
+            highestWin: 0,
+            totalBet: 0,
+            totalWin: 0,
+            casinoDonation: 0
+        };
+        
+        // Aktuelle Spielerdaten
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('slotUsers') || '{}');
+        
+        // DOM-Elemente
+        const gameContainer = document.getElementById('game-container');
+        const loginContainer = document.getElementById('login-container');
+        const spinButton = document.getElementById('spin-btn');
+        const autoSpinButton = document.getElementById('auto-spin-btn');
+        const resultMessage = document.getElementById('result-message');
+        const balanceElement = document.getElementById('balance');
+        const betAmountInput = document.getElementById('bet-amount');
+        const decreaseBetButton = document.getElementById('decrease-bet');
+        const increaseBetButton = document.getElementById('increase-bet');
+        const loginButton = document.getElementById('login-btn');
+        const logoutButton = document.getElementById('logout-btn');
+        const userNameElement = document.getElementById('user-name');
+        const totalSpinsElement = document.getElementById('total-spins');
+        const winningSpinsElement = document.getElementById('winning-spins');
+        const highestWinElement = document.getElementById('highest-win');
+        const totalBetElement = document.getElementById('total-bet');
+        const totalWinElement = document.getElementById('total-win');
+        const casinoDonationElement = document.getElementById('casino-donation');
+        const paylines = document.querySelectorAll('.payline');
+        
+        // Account-System
+        loginButton.addEventListener('click', () => {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if (!username || !password) {
+                alert('Bitte gib Benutzername und Passwort ein.');
+                return;
+            }
+            
+            // Überprüfen, ob der Benutzer existiert
+            if (users[username]) {
+                // Login-Check
+                if (users[username].password !== password) {
+                    alert('Falsches Passwort.');
+                    return;
+                }
+                
+                currentUser = users[username];
+            } else {
+                // Neuen Benutzer erstellen
+                currentUser = {
+                    username: username,
+                    password: password,
+                    balance: 100.00, // Demoguthaben
+                    stats: {
+                        totalSpins: 0,
+                        winningSpins: 0,
+                        highestWin: 0,
+                        totalBet: 0,
+                        totalWin: 0,
+                        casinoDonation: 0
+                    }
+                };
+                
+                users[username] = currentUser;
+                localStorage.setItem('slotUsers', JSON.stringify(users));
+            }
+            
+            // Statistiken laden
+            stats = currentUser.stats;
+            updateStats();
+            
+            // Spielinterface anzeigen
+            loginContainer.style.display = 'none';
+            gameContainer.style.display = 'block';
+            
+            userNameElement.textContent = currentUser.username;
+            balanceElement.textContent = currentUser.balance.toFixed(2);
+        });
+        
+        // Ausloggen
+        logoutButton.addEventListener('click', () => {
+            // Aktuellen Benutzer speichern
+            saveUserData();
+            
+            // Zurücksetzen
+            currentUser = null;
+            isSpinning = false;
+            autoSpinActive = false;
+            
+            // Zurück zum Login
+            loginContainer.style.display = 'block';
+            gameContainer.style.display = 'none';
+            
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            
+            // Autodrehen stoppen
+            autoSpinButton.textContent = 'Auto-Drehen';
+        });
+        
+        // Speichern der Benutzerdaten
+        function saveUserData() {
+            if (!currentUser) return;
+            
+            currentUser.balance = parseFloat(balanceElement.textContent);
+            currentUser.stats = stats;
+            
+            users[currentUser.username] = currentUser;
+            localStorage.setItem('slotUsers', JSON.stringify(users));
+        }
+        
+        // Spielmechanik
+        // Reels initialisieren
+        function initializeReels() {
+            for (let i = 1; i <= REEL_COUNT; i++) {
+                const reel = document.getElementById(`reel${i}`);
+                const symbolsContainer = reel.querySelector('.symbols');
+                
+                // Symbole zufällig füllen (3 sichtbare + 3 für die Animation)
+                symbolsContainer.innerHTML = '';
+                for (let j = 0; j < ROW_COUNT * 2; j++) {
+                    const symbol = document.createElement('div');
+                    symbol.className = 'symbol';
+                    symbol.textContent = getRandomSymbol();
+                    symbolsContainer.appendChild(symbol);
+                }
+            }
+        }
+        
+        // Zufälliges Symbol generieren
+        function getRandomSymbol() {
+            return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        }
+        
+        // Spin-Mechanik
+        function spin() {
+            if (isSpinning) return;
+            
+            const betAmount = parseFloat(betAmountInput.value);
+            const balance = parseFloat(balanceElement.textContent);
+            
+            if (betAmount > balance) {
+                alert('Nicht genügend Guthaben für diesen Einsatz!');
+                return;
+            }
+            
+            if (betAmount < 0.5 || betAmount > 100) {
+                alert('Der Einsatz muss zwischen 0,50 € und 100 € liegen.');
+                return;
+            }
+            
+            // Einsatz abziehen
+            const newBalance = balance - betAmount;
+            balanceElement.textContent = newBalance.toFixed(2);
+            
+            // Statistiken aktualisieren
+            stats.totalSpins++;
+            stats.totalBet += betAmount;
+            
+            // Status aktualisieren
+            isSpinning = true;
+            spinButton.disabled = true;
+            resultMessage.textContent = '';
+            resultMessage.classList.remove('win');
+            
+            // Paylines zurücksetzen
+            paylines.forEach(line => line.classList.remove('active'));
+            
+            // Symbole für jedes Reel generieren
+            for (let i = 1; i <= REEL_COUNT; i++) {
+                const reel = document.getElementById(`reel${i}`);
+                const symbolsContainer = reel.querySelector('.symbols');
+                
+                // Aktuelle Symbole speichern
+                const symbols = [];
+                for (let j = 0; j < ROW_COUNT; j++) {
+                    const newSymbol = getRandomSymbol();
+                    symbols.push(newSymbol);
+                }
+                
+                // Neue Symbole erstellen
+                symbolsContainer.innerHTML = '';
+                // Kopie der aktuellen Symbole für den Start
+                for (let j = 0; j < ROW_COUNT; j++) {
+                    const symbol = document.createElement('div');
+                    symbol.className = 'symbol';
+                    symbol.textContent = getRandomSymbol();
+                    symbolsContainer.appendChild(symbol);
+                }
+                
+                // Die tatsächlichen Ergebnissymbole
+                for (let j = 0; j < ROW_COUNT; j++) {
+                    const symbol = document.createElement('div');
+                    symbol.className = 'symbol';
+                    symbol.textContent = symbols[j];
+                    symbolsContainer.appendChild(symbol);
+                    
+                    // Speichern der Symbole für die Gewinnauswertung
+                    if (!currentSymbols[i-1]) currentSymbols[i-1] = [];
+                    currentSymbols[i-1][j] = symbols[j];
+                }
+                
+                // Animation starten mit Verzögerung für jedes Reel
+                setTimeout(() => {
+                    symbolsContainer.style.transform = 'translateY(-33.33%)';
+                }, i * 200);
+            }
+            
+            // Nach der Animation Ergebnis auswerten
+            setTimeout(() => {
+                // Gewinn berechnen
+                const winResult = calculateWin(betAmount);
+                const winAmount = winResult.totalWin;
+                
+                // Saldo aktualisieren
+                const currentBalance = parseFloat(balanceElement.textContent);
+                balanceElement.textContent = (currentBalance + winAmount).toFixed(2);
+                
+                // Statistiken aktualisieren
+                if (winAmount > 0) {
+                    stats.winningSpins++;
+                    stats.totalWin += winAmount;
+                    
+                    // Casino-Spende
+                    const casinoAmount = (winResult.rawWin * CASINO_PERCENTAGE);
+                    stats.casinoDonation += casinoAmount;
+                    
+                    // Ergebnisanzeige
+                    resultMessage.textContent = `Gewonnen: ${winAmount.toFixed(2)} €!`;
+                    resultMessage.classList.add('win');
+                    
+                    if (winAmount > stats.highestWin) {
+                        stats.highestWin = winAmount;
+                    }
+                    
+                    // Gewinnlinien anzeigen
+                    winResult.winningLines.forEach(lineIndex => {
+                        paylines[lineIndex].classList.add('active');
+                    });
+                    
+                    // Hervorheben der Gewinnsymbole
+                    winResult.winningSymbols.forEach(pos => {
+                        const reel = document.getElementById(`reel${pos[0]+1}`);
+                        const symbols = reel.querySelectorAll('.symbol');
+                        symbols[pos[1] + ROW_COUNT].classList.add('highlight');
+                    });
+                } else {
+                    resultMessage.textContent = 'Kein Gewinn. Versuche es noch einmal!';
+                }
+                
+                updateStats();
+                saveUserData();
+                
+                // Rücksetzen für den nächsten Spin
+                isSpinning = false;
+                spinButton.disabled = false;
+                
+                // Bei Auto-Spin weitermachen
+                if (autoSpinActive) {
+                    setTimeout(spin, 1500);
+                }
+            }, REEL_COUNT * 200 + 1000);
+        }
+        
+        // Gewinnberechnung
+        function calculateWin(betAmount) {
+            let totalWin = 0;
+            const winningLines = [];
+            const winningSymbols = [];
+            
+            // Jede Gewinnlinie überprüfen
+            PAYLINES.forEach((line, lineIndex) => {
+                const firstSymbol = currentSymbols[line[0][0]][line[0][1]];
+                let count = 1;
+                const lineWinningSymbols = [line[0]];
+                
+                // Überprüfen, wie viele gleiche Symbole in Folge
+                for (let i = 1; i < line.length; i++) {
+                    const [reelIndex, rowIndex] = line[i];
+                    const symbol = currentSymbols[reelIndex][rowIndex];
+                    
+                    if (symbol === firstSymbol) {
+                        count++;
+                        lineWinningSymbols.push([reelIndex, rowIndex]);
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Gewinn berechnen, wenn mindestens 3 gleiche Symbole
+                if (count >= 3) {
+                    const symbolValue = SYMBOL_VALUES[firstSymbol];
+                    const lineWin = betAmount * symbolValue * (count - 2); // Multiplikator basierend auf der Anzahl der Symbole
+                    
+                    totalWin += lineWin;
+                    winningLines.push(lineIndex);
+                    winningSymbols.push(...lineWinningSymbols);
+                }
+            });
+            
+            // Roher Gewinn (vor Steuern)
+            const rawWin = totalWin;
+            
+            // Spielersteuer anwenden
+            const afterTax = rawWin * (1 - PLAYER_TAX);
+            
+            return {
+                rawWin: rawWin,
+                totalWin: afterTax,
+                winningLines: winningLines,
+                winningSymbols: winningSymbols
+            };
+        }
+        
+        // Statistiken aktualisieren
+        function updateStats() {
+            totalSpinsElement.textContent = stats.totalSpins;
+            winningSpinsElement.textContent = stats.winningSpins;
+            highestWinElement.textContent = stats.highestWin.toFixed(2);
+            totalBetElement.textContent = stats.totalBet.toFixed(2);
+            totalWinElement.textContent = stats.totalWin.toFixed(2);
+            casinoDonationElement.textContent = stats.casinoDonation.toFixed(2);
+        }
+        
+        // Event-Listener
+        spinButton.addEventListener('click', spin);
+        
+        autoSpinButton.addEventListener('click', () => {
+            autoSpinActive = !autoSpinActive;
+            autoSpinButton.textContent = autoSpinActive ? 'Stop Auto' : 'Auto-Drehen';
+            
+            if (autoSpinActive && !isSpinning) {
+                spin();
+            }
+        });
+        
+        decreaseBetButton.addEventListener('click', () => {
+            let currentBet = parseFloat(betAmountInput.value);
+            currentBet = Math.max(0.5, currentBet - 0.5);
+            betAmountInput.value = currentBet.toFixed(2);
+        });
+        
+        increaseBetButton.addEventListener('click', () => {
+            let currentBet = parseFloat(betAmountInput.value);
+            currentBet = Math.min(100, currentBet + 0.5);
+            betAmountInput.value = currentBet.toFixed(2);
+        });
+        
+        betAmountInput.addEventListener('change', () => {
+            let value = parseFloat(betAmountInput.value);
+            if (isNaN(value)) value = 1;
+            value = Math.max(0.5, Math.min(100, value));
+            betAmountInput.value = value.toFixed(2);
+        });
+        
+        // Reels initialisieren beim Laden
+        initializeReels();
+        
+        // Reels nach dem Spin zurücksetzen
+        document.querySelectorAll('.reel').forEach(reel => {
+            reel.querySelector('.symbols').addEventListener('transitionend', function() {
+                this.style.transition = 'none';
+                this.style.transform = 'translateY(0)';
+                setTimeout(() => {
+                    this.style.transition = 'transform 0.5s ease-in-out';
+                }, 50);
+            });
+        });
+    </script>
+</body>
+</html>
